@@ -2,10 +2,12 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const knex = require("knex");
-const register = require("./controllers/register.js")
+
+const register = require("./controllers/register.js");
 const signin = require("./controllers/signin.js");
-const profile = require("./controllers/profile.js")
+const profile = require("./controllers/profile.js");
 const image = require("./controllers/imageentry.js");
+const imageurl = require("./controllers/imageentry.js")
 
 /* create database connection with knex */
 const db = knex({
@@ -37,22 +39,26 @@ app.get("/", (req, res) => {
 });
 
 /* Post signin requests, check against login table, and return user if email/hash matches */
-app.post("/signin", (req, res) => { signin.handleSignIn(req, res, db, bcrypt) });
+app.post("/signin", (req, res) => {
+  signin.handleSignIn(req, res, db, bcrypt);
+});
 
 /* Hash user password, store info in user table/login table, return user, redirect */
-app.post("/register", (req, res) => { register.handleRegister(req, res, db, bcrypt) });
+app.post("/register", (req, res) => {
+  register.handleRegister(req, res, db, bcrypt);
+});
 
 /* return the requested profile by ID */
-app.get("/profile/:id", (req, res) => { profile.handleProfile(req, res, db) });
+app.get("/profile/:id", (req, res) => {
+  profile.handleProfile(req, res, db);
+});
 
 /* increment the user's image entries count */
-app.put("/image", (req, res) => { image.handleImageEntry(req, res, db) });
+app.post("/imageurl", (req, res) => {
+  imageurl.handleApiCall(req, res);
+});
 
-/* 
-/ --> res = this is working
-/signin --> POST (user data in JSON format) = success/fail
-/register --> POST (user data in JSON format) =  user
-/profile/:userId --> GET = user
-/image --> PUT --> user
-
-*/
+/* increment the user's image entries count */
+app.put("/image", (req, res) => {
+  image.handleImageEntry(req, res, db);
+});
