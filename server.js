@@ -3,7 +3,9 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const knex = require("knex");
 const register = require("./controllers/register.js")
-const signin = require("./controllers/signin.js")
+const signin = require("./controllers/signin.js");
+const profile = require("./controllers/profile.js")
+const image = require("./controllers/imageentry.js");
 
 /* create database connection with knex */
 const db = knex({
@@ -41,34 +43,10 @@ app.post("/signin", (req, res) => { signin.handleSignIn(req, res, db, bcrypt) })
 app.post("/register", (req, res) => { register.handleRegister(req, res, db, bcrypt) });
 
 /* return the requested profile by ID */
-app.get("/profile/:id", (req, res) => {
-  const { id } = req.params;
-  db.select("*")
-    .from("users")
-    .where({ id })
-    .returning("*")
-    .then((user) => {
-      if (user.length) {
-        res.json(user[0]);
-      } else {
-        res.status(400).json("User not found");
-      }
-    })
-    .catch((err) => res.status(400).json("User not found"));
-});
+app.get("/profile/:id", (req, res) => { profile.handleProfile(req, res, db) });
 
 /* increment the user's image entries count */
-app.put("/image", (req, res) => {
-  const { id } = req.body;
-  db("users")
-    .where({ id })
-    .increment("entries", 1)
-    .returning("entries")
-    .then((entries) => {
-      res.json(entries[0]);
-    })
-    .catch((err) => res.status(400).json("Unable to get count"));
-});
+app.put("/image", (req, res) => { image.handleImageEntry(req, res, db) });
 
 /* 
 / --> res = this is working
