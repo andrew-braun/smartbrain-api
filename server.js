@@ -2,7 +2,10 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const knex = require("knex");
+const register = require("./controllers/register.js")
+const signin = require("./controllers/signin.js")
 
+/* create database connection with knex */
 const db = knex({
   client: "pg",
   connection: {
@@ -13,44 +16,17 @@ const db = knex({
   },
 });
 
-db.select("*")
-  .from("users")
-  .then((data) => {
-    console.log(data);
-  });
-
+/* Set up Express server */
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+/* Resolve CORS errors with cors middleware */
 app.use(cors());
 
-const database = {
-  users: [
-    {
-      id: "1",
-      name: "R2-D2",
-      email: "r2@d2.net",
-      password: "beepboop",
-      entries: 0,
-      joined: new Date(),
-    },
-    {
-      id: "2",
-      name: "Sonny",
-      email: "sonny@asimov.org",
-      password: "human",
-      entries: 0,
-      joined: new Date(),
-    },
-  ],
-  login: [
-    {
-      id: "987",
-      hash: "",
-      email: "r2@d2.net",
-    },
-  ],
-};
+app.listen(3000, () => {
+  console.log("App is running on port 3000");
+});
 
 app.get("/", (req, res) => {
   db("users")
@@ -58,46 +34,13 @@ app.get("/", (req, res) => {
     .then((users) => res.json(users));
 });
 
-app.post("/signin", (req, res) => {
-    
-    db("users").where({email})
-});
+/* Post signin requests, check against login table, and return user if email/hash matches */
+app.post("/signin", (req, res) => { signin.handleSignIn(req, res, db, bcrypt) });
 
-app.post("/register", (req, res) => {
-  const { email, name, password } = req.body;
-  const hash = bcrypt.hashSync(password, 10);
-  db.transaction((trx) => {
-    trx
-      .insert({
-        hash: hash,
-        email: email,
-      })
-      .into("login")
-      .returning("email")
-      .then((loginEmail) => {
-        return db("users")
-          .returning("*")
-          .insert({
-            name: name,
-            email: loginEmail[0],
-            joined: new Date(),
-          })
-          .then((user) => {
-            res.json(user[0]);
-          })
-      })
-      .then(trx.commit)
-      .catch(trx.rollback)
-  })
-  .catch((err) =>
-    res
-      .status(400)
-      .json(
-        "Critical systems failure! Evacuate! Oh, wait, sorry--it was just a problem with your registration. Have you already joined?"
-      )
-  );
-});
+/* Hash user password, store info in user table/login table, return user, redirect */
+app.post("/register", (req, res) => { register.handleRegister(req, res, db, bcrypt) });
 
+/* return the requested profile by ID */
 app.get("/profile/:id", (req, res) => {
   const { id } = req.params;
   db.select("*")
@@ -114,6 +57,7 @@ app.get("/profile/:id", (req, res) => {
     .catch((err) => res.status(400).json("User not found"));
 });
 
+/* increment the user's image entries count */
 app.put("/image", (req, res) => {
   const { id } = req.body;
   db("users")
@@ -124,10 +68,6 @@ app.put("/image", (req, res) => {
       res.json(entries[0]);
     })
     .catch((err) => res.status(400).json("Unable to get count"));
-});
-
-app.listen(3000, () => {
-  console.log("App is running on port 3000");
 });
 
 /* 
