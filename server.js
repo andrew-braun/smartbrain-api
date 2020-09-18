@@ -28,10 +28,6 @@ app.use(express.json());
 /* Resolve CORS errors with cors middleware */
 app.use(cors());
 
-app.listen(3000, () => {
-  console.log("App is running on port 3000");
-});
-
 app.get("/", (req, res) => {
   db("users")
     .returning("*")
@@ -62,3 +58,8 @@ app.post("/imageurl", (req, res) => {
 app.put("/image", (req, res) => {
   image.handleImageEntry(req, res, db);
 });
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`App is running on port ${process.env.PORT}`);
+});
+
