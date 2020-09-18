@@ -28,12 +28,13 @@ app.use(express.json());
 /* Resolve CORS errors with cors middleware */
 app.use(cors());
 
-app.get("/", (req, res) => {
-  db("users")
-    .returning("*")
-    .then((users) => res.json(users));
-});
+// app.get("/", (req, res) => {
+//   db("users")
+//     .returning("*")
+//     .then((users) => res.json(users));
+// });
 
+app.get("/", (req, res) => { res.send("It's working!") })
 /* Post signin requests, check against login table, and return user if email/hash matches */
 app.post("/signin", (req, res) => {
   signin.handleSignIn(req, res, db, bcrypt);
