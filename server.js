@@ -7,7 +7,7 @@ const register = require("./controllers/register.js");
 const signin = require("./controllers/signin.js");
 const profile = require("./controllers/profile.js");
 const image = require("./controllers/imageentry.js");
-const imageurl = require("./controllers/imageentry.js")
+const imageurl = require("./controllers/imageentry.js");
 
 /* create database connection with knex */
 const db = knex({
