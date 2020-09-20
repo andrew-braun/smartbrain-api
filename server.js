@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 const knex = require("knex");
+const { Client } = require("pg");
 
 const register = require("./controllers/register.js");
 const signin = require("./controllers/signin.js");
@@ -9,14 +10,30 @@ const profile = require("./controllers/profile.js");
 const image = require("./controllers/imageentry.js");
 const imageurl = require("./controllers/imageentry.js");
 
+/* Create Heroku client database connection */
+const client = new Client({
+  connectionString: process.env.DATABUSE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+client.connect();
+
+// client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+//   if (err) throw err;
+//   for (let row of res.rows) {
+//     console.log(JSON.stringify(row));
+//   }
+//   client.end();
+// });
+
 /* create database connection with knex */
 const db = knex({
   client: "pg",
   connection: {
-    host: "postgresql-rigid-87336",
-    user: "postgres",
-    // password: "testPassword",
-    database: `smartbrain`,
+    host: "process.env.DATABASE_URL",
+    ssl: true
   },
 });
 
