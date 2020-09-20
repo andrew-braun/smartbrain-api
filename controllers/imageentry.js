@@ -1,12 +1,8 @@
 const Clarifai = require("clarifai");
-const cors = require("cors");
 
 const app = new Clarifai.App({
   apiKey: "57c008f0aadb46e4a75b6ae94fe85334",
 });
-
-/* Resolve CORS errors with cors middleware */
-app.use(cors());
 
 const handleApiCall = (req, res) => {
   app.models
