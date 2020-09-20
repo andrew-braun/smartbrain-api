@@ -10,15 +10,15 @@ const profile = require("./controllers/profile.js");
 const image = require("./controllers/imageentry.js");
 const imageurl = require("./controllers/imageentry.js");
 
-/* Create Heroku client database connection */
-const client = new Client({
-  connectionString: process.env.DATABUSE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
+// /* Create Heroku client database connection */
+// const client = new Client({
+//   connectionString: process.env.DATABUSE_URL,
+//   ssl: {
+//     rejectUnauthorized: false
+//   }
+// });
 
-client.connect();
+// client.connect();
 
 // client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
 //   if (err) throw err;
@@ -32,7 +32,7 @@ client.connect();
 const db = knex({
   client: "pg",
   connection: {
-    host: "process.env.DATABASE_URL",
+    connectionString: "process.env.DATABASE_URL",
     ssl: true
   },
 });
