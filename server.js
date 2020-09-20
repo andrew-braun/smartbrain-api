@@ -13,9 +13,9 @@ const imageurl = require("./controllers/imageentry.js");
 const db = knex({
   client: "pg",
   connection: {
-    host: "127.0.0.1",
+    host: "postgresql-rigid-87336",
     user: "postgres",
-    password: "testPassword",
+    // password: "testPassword",
     database: `smartbrain`,
   },
 });
@@ -36,6 +36,7 @@ app.use(cors());
 
 app.get("/", (req, res) => { res.send("It's working!") })
 /* Post signin requests, check against login table, and return user if email/hash matches */
+
 app.post("/signin", (req, res) => {
   signin.handleSignIn(req, res, db, bcrypt);
 });
