@@ -20,6 +20,9 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+/* Resolve CORS errors with cors middleware */
+app.use(cors());
+
 // app.get("/", (req, res) => {
 //   db("users")
 //     .returning("*")
